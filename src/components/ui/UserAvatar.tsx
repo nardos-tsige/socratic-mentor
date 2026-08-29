@@ -14,7 +14,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   size = 'md',
   className = '',
 }) => {
-  // If avatar is already a single letter or initial, use it; otherwise compute from name
+  
   const initial = avatar && avatar.length === 1 && !avatar.match(/\p{Extended_Pictographic}/u)
     ? avatar.toUpperCase()
     : getAvatarInitial(name || avatar || 'N');
