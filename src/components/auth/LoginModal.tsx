@@ -106,7 +106,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -115,14 +114,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-xs"
         />
 
-        {/* Modal Window */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           className="relative w-full max-w-md max-h-[92dvh] overflow-y-auto bg-white dark:bg-[#161B22] border border-[#CBD5E1] dark:border-[#30363D] rounded-2xl p-6 sm:p-8 shadow-2xl z-10 text-[#0F172A] dark:text-[#F0F6FC]"
         >
-          {/* Close button */}
           <button
             onClick={onClose}
             aria-label="Close"
@@ -131,14 +128,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             <X className="w-4 h-4" />
           </button>
 
-          {/* Header */}
           <div className="text-center space-y-2 mb-6">
             <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-[#059669]/10 dark:bg-[#34D399]/15 border border-[#059669]/30 dark:border-[#34D399]/30 text-[#059669] dark:text-[#34D399] font-bold text-lg mb-1 shadow-xs">
               {viewMode === 'forgot_password' ? <KeyRound className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
             </div>
             <h3 className="text-2xl font-bold tracking-tight text-[#0F172A] dark:text-[#F0F6FC]">
               {viewMode === 'signup' && 'Create your Account'}
-              {viewMode === 'signin' && 'Welcome to my-mentor'}
+              {viewMode === 'signin' && 'Welcome to Socratic Mentor'}
               {viewMode === 'forgot_password' && 'Reset Your Password'}
             </h3>
             <p className="text-xs text-[#64748B] dark:text-[#8B949E] max-w-xs mx-auto">
@@ -148,7 +144,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </p>
           </div>
 
-          {/* Success Notification for Password Reset */}
           {resetSuccessMessage && (
             <div className="mb-4 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs flex items-start gap-2.5 animate-fadeIn">
               <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
@@ -159,7 +154,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </div>
           )}
 
-          {/* Error Alert */}
           {error && (
             <div className="mb-4 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-300 text-xs flex items-start gap-2.5 animate-fadeIn">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600 dark:text-red-400" />
@@ -170,7 +164,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </div>
           )}
 
-          {/* Social Sign In (Only in signin & signup modes) */}
           {viewMode !== 'forgot_password' && (
             <>
               <div className="mb-5">
@@ -206,7 +199,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 </button>
               </div>
 
-              {/* Divider */}
               <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-[#CBD5E1] dark:border-[#30363D]" />
@@ -220,7 +212,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </>
           )}
 
-          {/* Form */}
           <form onSubmit={handleEmailAuthSubmit} className="space-y-3.5">
             {viewMode === 'signup' && (
               <div>
@@ -311,7 +302,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </Button>
           </form>
 
-          {/* Footer Mode Switcher */}
           <div className="mt-5 text-center text-xs text-[#64748B] dark:text-[#8B949E]">
             {viewMode === 'forgot_password' ? (
               <button
