@@ -83,11 +83,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isScrolledUp, setIsScrolledUp] = useState(false);
   const [starterSuggestionClicked, setStarterSuggestionClicked] = useState(false);
 
-  // Rename session title state
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingTitleText, setEditingTitleText] = useState('');
 
-  // Modals state
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<ChatSession | null>(null);
@@ -111,7 +109,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     scrollToBottom();
   }, [activeSession?.messages, isLoading]);
 
-  // Reset starter suggestion clicked flag on session change
   useEffect(() => {
     setStarterSuggestionClicked(false);
   }, [activeSessionId]);
@@ -122,7 +119,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       .map((m) => `[${m.role.toUpperCase()}] (${new Date(m.timestamp).toLocaleTimeString()}):\n${m.content}\n`)
       .join('\n----------------------------------------\n\n');
 
-    const blob = new Blob([`🤖 my-mentor Socratic Session: ${activeSession.title}\n\n${formatted}`], {
+    const blob = new Blob([`🤖 Socratic Mentor Session: ${activeSession.title}\n\n${formatted}`], {
       type: 'text/plain;charset=utf-8',
     });
     const url = URL.createObjectURL(blob);
@@ -142,7 +139,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setTimeout(() => setShowResetNotice(false), 3000);
   };
 
-  // Filtered sessions for sidebar
   const filteredSessions = sessions.filter((s) =>
     s.title.toLowerCase().includes(searchFilter.toLowerCase()) ||
     (s.subject && s.subject.toLowerCase().includes(searchFilter.toLowerCase()))
@@ -152,7 +148,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <div className="flex-1 flex overflow-hidden h-[calc(100vh-4rem)] bg-[#F8FAFC] dark:bg-[#0D1117] text-[#0F172A] dark:text-[#F0F6FC] transition-colors relative">
-      {/* MOBILE BACKDROP OVERLAY */}
       {mobileSidebarOpen && (
         <div
           onClick={() => setMobileSidebarOpen(false)}
@@ -160,19 +155,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         />
       )}
 
-      {/* ========================================================= */}
-      {/* DEEPSEEK-STYLE SIDEBAR (Left Column) */}
-      {/* ========================================================= */}
       <aside
         className={`fixed md:static inset-y-0 left-0 z-50 md:z-20 flex flex-col h-full bg-white dark:bg-[#161B22] border-r border-[#E2E8F0] dark:border-[#30363D] transition-all duration-300 ease-in-out shrink-0 overflow-hidden ${
-          // Mobile open/close
           mobileSidebarOpen ? 'translate-x-0 w-72 shadow-2xl' : '-translate-x-full md:translate-x-0'
         } ${
-          // Desktop collapse state
           desktopSidebarExpanded ? 'md:w-72' : 'md:w-0 md:border-r-0'
         }`}
       >
-        {/* SIDEBAR TOP: New Chat Button & Search */}
         <div className="p-3.5 border-b border-[#E2E8F0] dark:border-[#30363D] shrink-0 space-y-2.5">
           <div className="flex items-center justify-between gap-2">
             <button
@@ -186,7 +175,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <span>New Dialogue</span>
             </button>
 
-            {/* Mobile close button / desktop collapse */}
             <button
               onClick={() => {
                 setMobileSidebarOpen(false);
@@ -199,7 +187,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </button>
           </div>
 
-          {/* Quick Search */}
           <div className="relative">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] dark:text-[#8B949E]" />
             <input
@@ -212,7 +199,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         </div>
 
-        {/* SIDEBAR MIDDLE: Sessions List with Delete Icon for each item */}
         <div className="flex-1 min-h-0 overflow-y-auto p-2 space-y-1">
           <div className="px-2 py-1 text-[11px] font-semibold text-[#64748B] dark:text-[#8B949E] uppercase tracking-wider flex items-center justify-between">
             <span>Recent Sessions</span>
@@ -294,7 +280,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
                   {!isEditing && (
                     <div className="flex items-center gap-1 shrink-0">
-                      {/* Rename / Edit Icon button */}
                       {onRenameSession && (
                         <button
                           onClick={(e) => {
@@ -310,7 +295,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         </button>
                       )}
 
-                      {/* Delete Icon */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -330,11 +314,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
         </div>
 
-        {/* ========================================================= */}
-        {/* SIDEBAR BOTTOM: Profile Section */}
-        {/* ========================================================= */}
         <div className="relative mt-auto border-t border-[#E2E8F0] dark:border-[#30363D] p-2.5 bg-[#F8FAFC] dark:bg-[#0D1117]/80 shrink-0">
-          {/* User Profile Bar Pill */}
           <div className="flex items-center justify-between p-1.5 rounded-xl bg-transparent">
             <div className="flex items-center gap-2.5 text-left flex-1 overflow-hidden">
               <UserAvatar name={user.name || 'Learner'} avatar={user.avatar || '👤'} size="md" />
@@ -351,14 +331,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </div>
       </aside>
 
-      {/* ========================================================= */}
-      {/* MAIN CHAT AREA (Stacked: Top Toolbar, Scrollable Dialogue, Bottom Input) */}
-      {/* ========================================================= */}
       <main className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative">
-        {/* 1. PINNED TOP TOOLBAR */}
         <div className="h-14 px-3 sm:px-6 border-b border-[#E2E8F0] dark:border-[#30363D] bg-white/80 dark:bg-[#161B22]/80 backdrop-blur-md flex items-center justify-between gap-2 shrink-0 z-10 transition-colors">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            {/* Sidebar toggle button */}
             <button
               onClick={() => {
                 if (window.innerWidth < 768) {
@@ -419,7 +394,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     {activeSession?.title || 'Socratic Dialogue'}
                   </span>
 
-                  {/* Manual Rename / Edit Button */}
                   {onRenameSession && activeSession && (
                     <button
                       onClick={() => {
@@ -438,9 +412,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           </div>
 
-          {/* Right Toolbar Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Fully Functional Reset Icon Button */}
             <button
               onClick={() => setIsResetModalOpen(true)}
               title="Reset current conversation"
@@ -450,7 +422,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <RotateCcw className="w-4 h-4" />
             </button>
 
-            {/* Fully Functional Share Icon Button (Includes copy link, transcript export, and download) */}
             <button
               onClick={() => setIsShareModalOpen(true)}
               title="Share dialogue"
@@ -462,7 +433,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         </div>
 
-        {/* Reset Confirmation Toast Notice */}
         {showResetNotice && (
           <div className="absolute top-16 right-4 z-30 bg-white dark:bg-[#161B22] border border-[#059669] dark:border-[#34D399]/60 text-[#059669] dark:text-[#34D399] px-3.5 py-2 rounded-xl text-xs shadow-lg flex items-center gap-2 animate-fadeIn">
             <RotateCcw className="w-3.5 h-3.5" />
@@ -470,7 +440,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         )}
 
-        {/* Export Toast Notification */}
         {showExportNotice && (
           <div className="absolute top-16 right-4 z-30 bg-white dark:bg-[#161B22] border border-[#16A34A] dark:border-[#3FB950]/50 text-[#16A34A] dark:text-[#3FB950] px-3.5 py-2 rounded-xl text-xs shadow-lg flex items-center gap-2 animate-fadeIn">
             <Check className="w-3.5 h-3.5" />
@@ -478,14 +447,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         )}
 
-        {/* 2. SCROLLABLE SESSIONS DIALOGUE CONTAINER */}
         <div
           ref={dialogueContainerRef}
           onScroll={handleDialogueScroll}
           className="flex-1 overflow-y-auto min-h-0 px-3 sm:px-6 py-6 space-y-6"
         >
           <div className="max-w-3xl mx-auto space-y-6">
-            {/* Subject/Topic Header Card on top of dialogue */}
             {activeSession && (
               <div className="p-3.5 rounded-2xl bg-white dark:bg-[#161B22] border border-[#CBD5E1] dark:border-[#30363D] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 overflow-hidden">
@@ -522,7 +489,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               </div>
             )}
 
-            {/* Socratic Active Guidance Live Callout */}
             <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#059669]/5 via-purple-500/5 to-transparent dark:from-[#34D399]/10 dark:via-purple-500/10 border border-[#059669]/20 dark:border-[#34D399]/20 flex items-center justify-between text-xs text-[#64748B] dark:text-[#8B949E]">
               <div className="flex items-center gap-2">
                 <span className="inline-flex w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
@@ -540,7 +506,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               </span>
             </div>
 
-            {/* Dialogue Messages Sequence */}
             {activeSession?.messages.map((message, index) => (
               <ChatMessage
                 key={message.id}
@@ -555,10 +520,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               />
             ))}
 
-            {/* Real-time typing indicator */}
             {isLoading && <TypingIndicator />}
 
-            {/* Quick Socratic Suggestion Prompts if new dialogue */}
             {isNewSession && !isLoading && !starterSuggestionClicked && activeSession?.messages.length <= 1 && (
               <div className="pt-2">
                 <div className="text-xs font-semibold text-[#64748B] dark:text-[#8B949E] mb-2 flex items-center gap-1.5">
@@ -575,12 +538,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               </div>
             )}
 
-            {/* Scroll bottom anchor */}
             <div ref={messagesEndRef} className="h-2" />
           </div>
         </div>
 
-        {/* Floating Scroll to Bottom Button */}
         {isScrolledUp && (
           <div className="absolute bottom-28 right-6 sm:right-10 z-30">
             <button
@@ -594,7 +555,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         )}
 
-        {/* 3. PINNED BOTTOM PROMPTING (TEXTING) COMPONENT */}
         <div className="shrink-0 z-20">
           <ChatInput
             onSend={(msg, atts) => onSendMessage(msg, atts, activeSession?.subject)}
@@ -613,7 +573,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </div>
       </main>
 
-      {/* Share Dialogue Modal */}
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
@@ -621,7 +580,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         user={user}
       />
 
-      {/* Reset Dialogue Modal */}
       <ResetModal
         isOpen={isResetModalOpen}
         onClose={() => setIsResetModalOpen(false)}
@@ -630,7 +588,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         sessionTitle={activeSession?.title}
       />
 
-      {/* Delete Session Modal */}
       <DeleteSessionModal
         isOpen={sessionToDelete !== null}
         onClose={() => setSessionToDelete(null)}
@@ -643,7 +600,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         sessionTitle={sessionToDelete?.title}
       />
 
-      {/* Interactive Full File Viewer Modal */}
       <FileViewerModal
         isOpen={viewingFile !== null}
         onClose={() => setViewingFile(null)}
