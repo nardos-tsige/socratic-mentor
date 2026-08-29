@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, Sparkles, Zap, MessageCircle, HelpCircle, Lightbulb } from 'lucide-react';
+import { Bot } from 'lucide-react';
 
 interface RobotMascotProps {
   speechText?: string;
@@ -36,15 +36,12 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
   const [showSparkleBurst, setShowSparkleBurst] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
-  // Play gentle cute robotic chime on user interaction
   const playRobotChime = (type: 'chirp' | 'happy' | 'boop') => {
     try {
       const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioContextClass) return;
       const ctx = new AudioContextClass();
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
+      if (ctx.state === 'suspended') ctx.resume();
 
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -76,9 +73,7 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
         osc.start(now);
         osc.stop(now + 0.14);
       }
-    } catch {
-      // Audio context might be restricted before interaction; fail silently
-    }
+    } catch {}
   };
 
   const handleRobotClick = () => {
@@ -90,7 +85,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
     const selectedMood = nextMoods[clickCount % nextMoods.length];
     setMood(selectedMood);
 
-    // Cycle through Socratic thoughts
     const nextThought = SOCRATIC_THOUGHTS[(clickCount + 1) % SOCRATIC_THOUGHTS.length];
     setCurrentSpeech(nextThought);
     setClickCount((prev) => prev + 1);
@@ -137,7 +131,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
 
   return (
     <div className={`inline-flex items-center select-none ${sizeConfig.containerClass} ${className}`}>
-      {/* 3D Walking Interactive SVG Robot Mascot */}
       <div
         className="relative shrink-0 flex items-center justify-center cursor-pointer group"
         onMouseEnter={() => {
@@ -151,12 +144,10 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
         onClick={handleRobotClick}
         title="Click to interact with your Socratic Robot partner!"
       >
-        {/* Dynamic 3D Volumetric Drop Shadow */}
         <div
           className={`absolute -bottom-1.5 w-[75%] h-3 bg-black/20 dark:bg-black/50 rounded-full blur-[3px] transition-all animate-robot-shadow`}
         />
 
-        {/* Energy Sparkle Burst Overlay on Click */}
         {showSparkleBurst && (
           <div className="absolute -top-3 -right-2 z-20 pointer-events-none animate-bounce">
             <span className="flex h-3 w-3 relative">
@@ -175,7 +166,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
           className="drop-shadow-md overflow-visible transition-transform duration-300 group-hover:scale-105"
         >
           <defs>
-            {/* 3D Metallic Chassis Gradients */}
             <linearGradient id="robot3DHeadGrad" x1="15" y1="14" x2="75" y2="45" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#374151" />
               <stop offset="25%" stopColor="#1F2937" />
@@ -224,7 +214,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
               <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
             </linearGradient>
 
-            {/* Neon Glow Filters */}
             <filter id="emeraldIntenseGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
               <feMerge>
@@ -239,61 +228,39 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
             </filter>
           </defs>
 
-          {/* 1. LEFT LEG (3D Step Walk cycle) */}
           <g className="animate-left-leg">
-            {/* Hip joint */}
             <circle cx="34" cy="74" r="3.5" fill="url(#jointMetalGrad)" stroke="#4B5563" strokeWidth="0.8" />
-            {/* Thigh & Shin with metallic chamfer */}
             <rect x="31.5" y="75" width="6.5" height="19" rx="3.25" fill="url(#limbMetalGrad)" stroke="#4B5563" strokeWidth="1" />
-            {/* Knee cap ring */}
             <rect x="31" y="82" width="7.5" height="3" rx="1.5" fill="#34D399" opacity="0.85" />
-            {/* 3D Foot Sole */}
             <rect x="27" y="91" width="14" height="7.5" rx="3.75" fill="url(#emeraldNeonGrad)" filter="url(#chassis3DBevel)" />
             <rect x="28.5" y="92" width="11" height="2" rx="1" fill="#A7F3D0" opacity="0.6" />
           </g>
 
-          {/* 2. RIGHT LEG (3D Step Walk cycle alternating) */}
           <g className="animate-right-leg">
-            {/* Hip joint */}
             <circle cx="56" cy="74" r="3.5" fill="url(#jointMetalGrad)" stroke="#4B5563" strokeWidth="0.8" />
-            {/* Thigh & Shin */}
             <rect x="53.5" y="75" width="6.5" height="19" rx="3.25" fill="url(#limbMetalGrad)" stroke="#4B5563" strokeWidth="1" />
-            {/* Knee cap ring */}
             <rect x="53" y="82" width="7.5" height="3" rx="1.5" fill="#34D399" opacity="0.85" />
-            {/* 3D Foot Sole */}
             <rect x="50" y="91" width="14" height="7.5" rx="3.75" fill="url(#emeraldNeonGrad)" filter="url(#chassis3DBevel)" />
             <rect x="51.5" y="92" width="11" height="2" rx="1" fill="#A7F3D0" opacity="0.6" />
           </g>
 
-          {/* 3. BOBBING 3D TORSO & HEAD CONTAINER */}
           <g className="animate-robot-bob">
-            {/* LEFT ARM (Swing or Wave) */}
             <g className={isHovered || mood === 'celebrate' ? 'animate-wave-arm' : 'animate-left-arm'}>
-              {/* Shoulder Ball Joint */}
               <circle cx="23" cy="53" r="4.5" fill="url(#jointMetalGrad)" stroke="#4B5563" strokeWidth="1" />
-              {/* Upper & Lower Arm with 3D bevel */}
               <rect x="20" y="54" width="6" height="18" rx="3" fill="url(#limbMetalGrad)" stroke="#4B5563" strokeWidth="1" />
-              {/* Forearm neon ring */}
               <rect x="19.5" y="62" width="7" height="2.5" rx="1.25" fill="#34D399" opacity="0.8" />
-              {/* 3D Hand Mitt */}
               <circle cx="23" cy="74" r="4.5" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
               <circle cx="23" cy="74" r="2" fill="#FFFFFF" opacity="0.7" />
             </g>
 
-            {/* RIGHT ARM (Swing or Wave) */}
             <g className="animate-right-arm">
-              {/* Shoulder Ball Joint */}
               <circle cx="67" cy="53" r="4.5" fill="url(#jointMetalGrad)" stroke="#4B5563" strokeWidth="1" />
-              {/* Upper & Lower Arm */}
               <rect x="64" y="54" width="6" height="18" rx="3" fill="url(#limbMetalGrad)" stroke="#4B5563" strokeWidth="1" />
-              {/* Forearm neon ring */}
               <rect x="63.5" y="62" width="7" height="2.5" rx="1.25" fill="#34D399" opacity="0.8" />
-              {/* 3D Hand Mitt */}
               <circle cx="67" cy="74" r="4.5" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
               <circle cx="67" cy="74" r="2" fill="#FFFFFF" opacity="0.7" />
             </g>
 
-            {/* TORSO / CHEST (Volumetric 3D Beveled Box) */}
             <rect
               x="26"
               y="48"
@@ -305,10 +272,8 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
               strokeWidth="1.5"
               filter="url(#chassis3DBevel)"
             />
-            {/* Top Specular Edge Highlight */}
             <path d="M 32 49 L 58 49" stroke="#9CA3AF" strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
 
-            {/* Chest Core Display Screen */}
             <rect
               x="33"
               y="53"
@@ -320,25 +285,20 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
               strokeWidth="1"
               opacity="0.95"
             />
-            {/* Spinning Socratic Core Dial / Waveform */}
             <g className="animate-core-spin">
               <circle cx="45" cy="60.5" r="5" stroke="#34D399" strokeWidth="1.2" strokeDasharray="3 2" fill="none" />
             </g>
             <circle cx="45" cy="60.5" r="2.5" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
 
-            {/* Socratic Energy Gauge Dots */}
             <circle cx="37" cy="72" r="1.5" fill="#34D399" />
             <circle cx="42" cy="72" r="1.5" fill="#34D399" />
             <circle cx="48" cy="72" r="1.5" fill="#34D399" />
             <circle cx="53" cy="72" r="1.5" fill="#F59E0B" />
 
-            {/* NECK CYLINDER */}
             <rect x="41" y="44" width="8" height="6" rx="2" fill="url(#jointMetalGrad)" stroke="#4B5563" strokeWidth="1" />
 
-            {/* 3D ANTENNA (With Energetic Oscillating Pulse Tip) */}
             <line x1="45" y1="20" x2="45" y2="8" stroke="#34D399" strokeWidth="3" strokeLinecap="round" />
             <circle cx="45" cy="11" r="2" fill="#4B5563" />
-            {/* Glowing Antenna Orb */}
             <circle
               cx="45"
               cy="6"
@@ -349,13 +309,11 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
             />
             <circle cx="43.5" cy="4.5" r="1.5" fill="#FFFFFF" />
 
-            {/* EAR BOLTS / AUDIO SENSORS */}
             <rect x="18" y="27" width="5" height="10" rx="2.5" fill="url(#jointMetalGrad)" stroke="#4B5563" strokeWidth="1" />
             <circle cx="20.5" cy="32" r="1.5" fill="#34D399" />
             <rect x="67" y="27" width="5" height="10" rx="2.5" fill="url(#jointMetalGrad)" stroke="#4B5563" strokeWidth="1" />
             <circle cx="69.5" cy="32" r="1.5" fill="#34D399" />
 
-            {/* 3D HEAD BASE (Chamfered Futuristic Helmet) */}
             <rect
               x="22"
               y="18"
@@ -367,10 +325,8 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
               strokeWidth="1.5"
               filter="url(#chassis3DBevel)"
             />
-            {/* Helmet Top Highlight Reflection */}
             <path d="M 29 19.5 L 61 19.5" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
 
-            {/* VISOR / GLOSSY CYBER-SCREEN */}
             <rect
               x="27"
               y="23"
@@ -382,20 +338,15 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
               strokeWidth="1.2"
             />
 
-            {/* Glass Curvature Reflection Highlight */}
             <path
               d="M 28 24 Q 45 28 62 24 L 62 27 Q 45 31 28 27 Z"
               fill="url(#glassReflection)"
             />
 
-            {/* EXPRESSIVE 3D ROBOT EYES */}
             {mood === 'normal' && (
               <g className="animate-eye-blink">
-                {/* Left Eye */}
                 <circle cx="36" cy="31" r="3.6" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
                 <circle cx="37.2" cy="29.8" r="1.2" fill="#FFFFFF" />
-
-                {/* Right Eye */}
                 <circle cx="54" cy="31" r="3.6" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
                 <circle cx="55.2" cy="29.8" r="1.2" fill="#FFFFFF" />
               </g>
@@ -403,7 +354,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
 
             {mood === 'happy' && (
               <g>
-                {/* Cheerful inverted arc eyes ^ _ ^ */}
                 <path d="M 33 33 Q 36 27 39 33" stroke="#34D399" strokeWidth="2.8" strokeLinecap="round" fill="none" filter="url(#emeraldIntenseGlow)" />
                 <path d="M 51 33 Q 54 27 57 33" stroke="#34D399" strokeWidth="2.8" strokeLinecap="round" fill="none" filter="url(#emeraldIntenseGlow)" />
               </g>
@@ -411,17 +361,14 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
 
             {mood === 'wink' && (
               <g>
-                {/* Left Eye: Open sparkle */}
                 <circle cx="36" cy="31" r="3.8" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
                 <circle cx="37.2" cy="29.8" r="1.2" fill="#FFFFFF" />
-                {/* Right Eye: Playful wink */}
                 <path d="M 51 31 Q 54 35 57 31" stroke="#34D399" strokeWidth="2.8" strokeLinecap="round" fill="none" filter="url(#emeraldIntenseGlow)" />
               </g>
             )}
 
             {mood === 'celebrate' && (
               <g>
-                {/* Star breakthrough eyes */}
                 <polygon points="36,27 37.5,30.5 41,31 38.5,33.5 39,37 36,35 33,37 33.5,33.5 31,31 34.5,30.5" fill="url(#amberGoldGrad)" filter="url(#emeraldIntenseGlow)" />
                 <polygon points="54,27 55.5,30.5 59,31 56.5,33.5 57,37 54,35 51,37 51.5,33.5 49,31 52.5,30.5" fill="url(#amberGoldGrad)" filter="url(#emeraldIntenseGlow)" />
               </g>
@@ -429,7 +376,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
 
             {mood === 'thinking' && (
               <g>
-                {/* Curious scanning eyes looking upward */}
                 <circle cx="37" cy="28.5" r="3.4" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
                 <circle cx="38" cy="27.5" r="1" fill="#FFFFFF" />
                 <circle cx="55" cy="28.5" r="3.4" fill="url(#emeraldNeonGrad)" filter="url(#emeraldIntenseGlow)" />
@@ -437,7 +383,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
               </g>
             )}
 
-            {/* VISOR SMILE / SOCRATIC SYNAPSE INDICATOR */}
             <path
               d="M 40 37.5 Q 45 40.5 50 37.5"
               stroke="#34D399"
@@ -451,7 +396,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
         </svg>
       </div>
 
-      {/* 3D Dynamic Interactive Speech Bubble */}
       {showSpeechBubble && (
         <div
           onClick={() => {
@@ -462,7 +406,6 @@ export const RobotMascot: React.FC<RobotMascotProps> = ({
             interactive ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''
           } ${sizeConfig.bubbleClass}`}
         >
-          {/* Bubble Pointer Arrow with 3D shadow */}
           <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-0 h-0 border-y-[7px] border-y-transparent border-r-[9px] border-r-[#CBD5E1] dark:border-r-[#30363D]" />
           <div className="absolute top-1/2 -left-[7px] -translate-y-1/2 w-0 h-0 border-y-[6px] border-y-transparent border-r-[8px] border-r-white dark:border-r-[#161B22]" />
 

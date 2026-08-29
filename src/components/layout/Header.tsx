@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, BookOpen, Menu, X, Home, User, LogIn, UserPlus } from 'lucide-react';
+import { Bot, Menu, X, Home } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { UserProfile } from '../../types';
 
@@ -34,7 +34,6 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 sm:px-6 lg:px-8 border-b border-[#E2E8F0] dark:border-[#30363D] bg-white/90 dark:bg-[#161B22]/90 backdrop-blur-md transition-colors shrink-0">
-      {/* Brand Logo & Desktop Navigation */}
       <div className="flex items-center gap-6 sm:gap-8">
         <button
           onClick={handleLogoClick}
@@ -49,7 +48,6 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
         </button>
 
-        {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#64748B] dark:text-[#8B949E]">
           <button
             onClick={() => handleNav('landing')}
@@ -76,12 +74,9 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
       </div>
 
-      {/* Right Section Header Controls */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Theme Toggle (Sun/Moon) */}
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
 
-        {/* Mobile Hamburger Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="md:hidden min-w-[36px] min-h-[36px] flex items-center justify-center rounded-xl text-[#64748B] dark:text-[#8B949E] hover:text-[#0F172A] dark:hover:text-[#F0F6FC] bg-[#F1F5F9] dark:bg-[#21262D] border border-[#CBD5E1] dark:border-[#30363D] cursor-pointer transition-all"
@@ -91,7 +86,6 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
       </div>
 
-      {/* Mobile Backdrop & Navigation Drawer */}
       {mobileMenuOpen && (
         <>
           <div
@@ -127,4 +121,3 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
-

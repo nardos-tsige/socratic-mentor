@@ -85,7 +85,6 @@ export const FileViewerModal: React.FC<FileViewerModalProps> = ({
         className="relative w-full max-w-4xl max-h-[90vh] flex flex-col bg-white dark:bg-[#161B22] border border-[#CBD5E1] dark:border-[#30363D] rounded-2xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-[#E2E8F0] dark:border-[#30363D] bg-[#F8FAFC] dark:bg-[#0D1117]/80">
           <div className="flex items-center gap-2.5 min-w-0 pr-2">
             <div className="p-2 rounded-lg bg-[#2563EB]/10 dark:bg-[#58A6FF]/10 text-[#2563EB] dark:text-[#58A6FF] shrink-0">
@@ -109,7 +108,6 @@ export const FileViewerModal: React.FC<FileViewerModalProps> = ({
             </div>
           </div>
 
-          {/* Action buttons */}
           <div className="flex items-center gap-1.5 shrink-0">
             {isTextOrCode && file.textContent && (
               <button
@@ -183,7 +181,6 @@ export const FileViewerModal: React.FC<FileViewerModalProps> = ({
           </div>
         </div>
 
-        {/* Content Body */}
         <div className="flex-1 overflow-auto p-4 sm:p-6 flex items-center justify-center bg-[#F1F5F9]/50 dark:bg-[#0D1117]/50 min-h-[300px]">
           {isImage ? (
             <div className="flex items-center justify-center overflow-auto max-h-[70vh] w-full">
@@ -266,7 +263,6 @@ export const FileViewerModal: React.FC<FileViewerModalProps> = ({
           )}
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-[#E2E8F0] dark:border-[#30363D] bg-[#F8FAFC] dark:bg-[#0D1117]/80">
           <span className="text-xs text-[#64748B] dark:text-[#8B949E]">
             Click anywhere outside or press Esc to close

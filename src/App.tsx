@@ -8,16 +8,14 @@ import { ChatInterface } from './components/chat/ChatInterface';
 import { LoginModal } from './components/auth/LoginModal';
 import { SocraticGuideModal } from './components/modals/SocraticGuideModal';
 
-const THEME_KEY = 'my-mentor-theme-preference';
+const THEME_KEY = 'socratic-mentor-theme-preference';
 
 export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const stored = localStorage.getItem(THEME_KEY);
       if (stored === 'light' || stored === 'dark') return stored;
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
     return 'dark';
   });
 
@@ -61,13 +59,10 @@ export default function App() {
     user.preferences.soundEnabled
   );
 
-  // Sync theme changes to <html> class
   useEffect(() => {
     try {
       localStorage.setItem(THEME_KEY, theme);
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
       document.documentElement.classList.remove('light');
@@ -92,7 +87,6 @@ export default function App() {
         ? 'h-screen overflow-hidden'
         : 'min-h-screen'
     } ${theme === 'dark' ? 'bg-[#0D1117] text-[#F0F6FC]' : 'bg-[#F8FAFC] text-[#0F172A]'}`}>
-      {/* Sticky Global Navigation Header */}
       <Header
         currentView={currentView}
         onNavigate={(view) => setCurrentView(view)}
@@ -103,7 +97,6 @@ export default function App() {
         onOpenGuideModal={() => setIsGuideModalOpen(true)}
       />
 
-      {/* Dynamic View Display */}
       {currentView === 'landing' && (
         <LandingPage
           onStartQuestion={handleStartQuestionFromLanding}
@@ -137,7 +130,6 @@ export default function App() {
         />
       )}
 
-      {/* Global Footer (shown on landing page) */}
       {currentView === 'landing' && (
         <Footer
           onSelectPrompt={handleStartQuestionFromLanding}
@@ -145,7 +137,6 @@ export default function App() {
         />
       )}
 
-      {/* Authentication Modal */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
@@ -157,7 +148,6 @@ export default function App() {
         onClearError={() => setAuthError(null)}
       />
 
-      {/* Socratic Method Guide Modal */}
       <SocraticGuideModal
         isOpen={isGuideModalOpen}
         onClose={() => setIsGuideModalOpen(false)}

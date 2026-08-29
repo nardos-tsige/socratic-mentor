@@ -24,7 +24,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-resize textarea height smoothly
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -74,7 +73,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           ? `Pasted_Image_${new Date().toLocaleTimeString().replace(/:/g, '-')}.png`
           : `Pasted_File_${new Date().toLocaleTimeString().replace(/:/g, '-')}`);
 
-      // Check if file is text/code/data
       const isText =
         file.type.startsWith('text/') ||
         file.type === 'application/json' ||
@@ -85,7 +83,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       let url = '';
 
       if (isText && file.size < 1024 * 1024 * 5) {
-        // Read text content up to 5MB
         textContent = await new Promise<string>((resolve) => {
           const reader = new FileReader();
           reader.onload = () => resolve((reader.result as string) || '');
@@ -124,7 +121,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
-  // Dedicated paste handler for clipboard images & files
   const handlePaste = async (e: React.ClipboardEvent) => {
     const clipboardData = e.clipboardData;
     if (!clipboardData) return;
@@ -158,7 +154,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       }
     }
 
-    // Also check clipboardData.files for copied files
     if (filesToProcess.length === 0 && clipboardData.files && clipboardData.files.length > 0) {
       for (let i = 0; i < clipboardData.files.length; i++) {
         const f = clipboardData.files[i];
@@ -170,7 +165,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     if (filesToProcess.length > 0) {
       await processFiles(filesToProcess, customNames);
 
-      // If an image or file was pasted and no meaningful text was in clipboard, prevent default
       const textData = clipboardData.getData('text/plain');
       if (!textData || !textData.trim()) {
         e.preventDefault();
@@ -218,7 +212,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <div className="w-full bg-gradient-to-t from-white via-white/95 to-transparent dark:from-[#0D1117] dark:via-[#0D1117]/95 dark:to-transparent pt-3 pb-4 px-3 sm:px-6">
       <div className="max-w-4xl mx-auto flex flex-col gap-2">
-        {/* Hidden File Input */}
         <input
           ref={fileInputRef}
           type="file"
@@ -228,7 +221,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           accept="*/*"
         />
 
-        {/* Main Prompting Text Box Container */}
         <div
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -240,7 +232,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               : 'border-[#CBD5E1] dark:border-[#30363D] focus-within:border-[#059669] dark:focus-within:border-[#34D399] focus-within:ring-2 focus-within:ring-[#059669]/15 dark:focus-within:ring-[#34D399]/20'
           } rounded-2xl p-2.5 sm:p-3.5 shadow-md transition-all`}
         >
-          {/* Staged Attachments Preview Bar */}
           {Array.isArray(attachments) && attachments.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 mb-2 pb-2 border-b border-[#E2E8F0] dark:border-[#30363D]/60">
               {attachments.map((att) => {
@@ -307,11 +298,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             className="w-full bg-transparent text-[#0F172A] dark:text-[#F0F6FC] placeholder:text-[#94A3B8] dark:placeholder:text-[#8B949E] text-sm sm:text-base resize-none focus:outline-none max-h-44 min-h-[44px] py-1.5 px-2 leading-relaxed"
           />
 
-          {/* Prompting Controls Bar */}
           <div className="flex items-center justify-between pt-2 border-t border-[#E2E8F0] dark:border-[#30363D]/50 mt-1 gap-2">
-            {/* Left Actions: Attach File icon & Socratic Hint helper */}
             <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-              {/* File Upload Icon Button */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -337,7 +325,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               </button>
             </div>
 
-            {/* Right Actions: Send Button */}
             <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
               <button
                 type="button"

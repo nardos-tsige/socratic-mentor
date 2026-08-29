@@ -13,7 +13,6 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
   onSelect,
   className = '',
 }) => {
-  // Show at most 2 clean, high-relevance jumpstart questions
   const cleanList = suggestions.slice(0, 2);
 
   return (

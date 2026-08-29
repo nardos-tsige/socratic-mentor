@@ -7,7 +7,6 @@ interface MathMarkdownProps {
   className?: string;
 }
 
-// Safely render KaTeX math string to HTML string
 function renderMath(math: string, displayMode: boolean): string {
   const cleanMath = math.trim();
   if (!cleanMath) return '';
@@ -20,29 +19,21 @@ function renderMath(math: string, displayMode: boolean): string {
       strict: false,
     });
   } catch {
-    // If KaTeX fails, return cleaned math with clean typographic styling
     return `<span class="font-serif italic font-medium">${cleanMath}</span>`;
   }
 }
 
-// Normalize incoming text to resolve double-escaped newlines and slashes from LLM JSON responses
 function normalizeRawContent(raw: string): string {
   if (!raw) return '';
   let normalized = raw;
 
-  // 1. Replace literal '\n' sequences with real newline characters
   normalized = normalized.replace(/\\n/g, '\n');
-
-  // 2. Replace literal '\t' with spaces
   normalized = normalized.replace(/\\t/g, '  ');
-
-  // 3. Clean up double-escaped math delimiters: \\( -> \(, \\) -> \), \\[ -> \[, \\] -> \]
   normalized = normalized.replace(/\\\\([()[\]])/g, '\\$1');
 
   return normalized;
 }
 
-// Modular Code Block with one-click copy and syntax label
 const CodeBlockRenderer: React.FC<{ content: string; language?: string }> = ({ content, language }) => {
   const [copied, setCopied] = useState(false);
 
@@ -54,7 +45,6 @@ const CodeBlockRenderer: React.FC<{ content: string; language?: string }> = ({ c
 
   return (
     <div className="my-3 rounded-xl overflow-hidden border border-[#CBD5E1] dark:border-[#30363D] bg-[#0F172A] dark:bg-[#0D1117] shadow-sm">
-      {/* Code Header Bar */}
       <div className="px-3 py-1.5 bg-[#1E293B] dark:bg-[#161B22] border-b border-[#334155] dark:border-[#30363D] text-[11px] font-mono font-medium text-[#94A3B8] flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-[#CBD5E1] dark:text-[#E6EDF3]">
           <Terminal className="w-3.5 h-3.5 text-[#059669] dark:text-[#34D399]" />
@@ -80,7 +70,6 @@ const CodeBlockRenderer: React.FC<{ content: string; language?: string }> = ({ c
         </button>
       </div>
 
-      {/* Code Content */}
       <pre className="p-3.5 text-xs font-mono text-[#F1F5F9] dark:text-[#E6EDF3] overflow-x-auto m-0 leading-relaxed font-['JetBrains_Mono',monospace]">
         <code>{content}</code>
       </pre>
@@ -92,7 +81,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
   if (!content) return null;
 
   const normalized = normalizeRawContent(content);
-  // Split content into blocks: Code blocks, Display Math blocks on standalone lines, and text blocks
   const blocks = parseBlocks(normalized);
 
   return (
@@ -119,7 +107,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
           );
         }
 
-        // Standard text lines / paragraphs
         const lines = block.content.split('\n');
         return (
           <div key={index} className="space-y-1.5">
@@ -129,7 +116,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
                 return <div key={lineIdx} className="h-1" />;
               }
 
-              // Headers (#, ##, ###)
               if (line.startsWith('### ')) {
                 return (
                   <h4 key={lineIdx} className="font-bold text-sm text-[#0F172A] dark:text-[#F0F6FC] mt-2 mb-1">
@@ -152,7 +138,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
                 );
               }
 
-              // Blockquote (> ...)
               if (line.startsWith('> ')) {
                 return (
                   <blockquote
@@ -164,7 +149,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
                 );
               }
 
-              // Bullet points (- or * or •)
               if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
                 return (
                   <div key={lineIdx} className="flex items-start gap-2 pl-2">
@@ -176,7 +160,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
                 );
               }
 
-              // Numbered list item (1. 2.)
               const numMatch = line.match(/^(\d+)\.\s*(.*)/);
               if (numMatch) {
                 return (
@@ -191,7 +174,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
                 );
               }
 
-              // Standard paragraph line
               return (
                 <p key={lineIdx}>
                   <InlineContent text={line} />
@@ -205,7 +187,6 @@ export const MathMarkdown: React.FC<MathMarkdownProps> = ({ content, className =
   );
 };
 
-// Subcomponent to parse and render inline tokens: Math ($$...$$, $...$, \(...\), \[...\]), Code `...`, Bold **...**, Italic *...*
 const InlineContent: React.FC<{ text: string }> = ({ text }) => {
   const tokens = parseInlineTokens(text);
 
@@ -267,7 +248,6 @@ function parseBlocks(raw: string): Block[] {
   let remaining = raw;
 
   while (remaining.length > 0) {
-    // 1. Check for fenced code block: ```lang ... ```
     const codeMatch = remaining.match(/^```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/);
     if (codeMatch && codeMatch.index === 0) {
       blocks.push({
@@ -279,7 +259,6 @@ function parseBlocks(raw: string): Block[] {
       continue;
     }
 
-    // 2. Check for display math block on its own line/block: \n$$ ... $$\n or ^$$ ... $$
     const displayMathMatch =
       remaining.match(/^(?:\n|^)\$\$([\s\S]*?)\$\$(?:\n|$)/) ||
       remaining.match(/^(?:\n|^)\\\[([\s\S]*?)\\\](?:\n|$)/);
@@ -293,7 +272,6 @@ function parseBlocks(raw: string): Block[] {
       continue;
     }
 
-    // 3. Find next standalone code or display math block
     const nextCodeIdx = remaining.indexOf('```');
     const nextStandaloneMath = remaining.search(/(?:\n|^)\$\$[\s\S]*?\$\$/);
 
@@ -328,7 +306,6 @@ function parseInlineTokens(text: string): InlineToken[] {
   let pos = 0;
 
   while (pos < text.length) {
-    // Check for display-style $$...$$ written inside an inline paragraph
     if (text.startsWith('$$', pos)) {
       const endIdx = text.indexOf('$$', pos + 2);
       if (endIdx !== -1) {
@@ -341,7 +318,6 @@ function parseInlineTokens(text: string): InlineToken[] {
       }
     }
 
-    // Check for LaTeX inline math: \[ ... \]
     if (text.startsWith('\\[', pos)) {
       const endIdx = text.indexOf('\\]', pos + 2);
       if (endIdx !== -1) {
@@ -354,7 +330,6 @@ function parseInlineTokens(text: string): InlineToken[] {
       }
     }
 
-    // Check for LaTeX inline math: \( ... \)
     if (text.startsWith('\\(', pos)) {
       const endIdx = text.indexOf('\\)', pos + 2);
       if (endIdx !== -1) {
@@ -367,7 +342,6 @@ function parseInlineTokens(text: string): InlineToken[] {
       }
     }
 
-    // Check for LaTeX inline math: $ ... $ (exclude standalone currency like $10 or $ 5)
     if (text[pos] === '$' && pos + 1 < text.length && text[pos + 1] !== ' ' && text[pos + 1] !== '$') {
       const endIdx = text.indexOf('$', pos + 1);
       if (endIdx !== -1 && text[endIdx - 1] !== ' ') {
@@ -380,7 +354,6 @@ function parseInlineTokens(text: string): InlineToken[] {
       }
     }
 
-    // Check for inline code: `...`
     if (text[pos] === '`') {
       const endIdx = text.indexOf('`', pos + 1);
       if (endIdx !== -1) {
@@ -393,7 +366,6 @@ function parseInlineTokens(text: string): InlineToken[] {
       }
     }
 
-    // Check for bold: **...**
     if (text.startsWith('**', pos)) {
       const endIdx = text.indexOf('**', pos + 2);
       if (endIdx !== -1) {
@@ -406,7 +378,6 @@ function parseInlineTokens(text: string): InlineToken[] {
       }
     }
 
-    // Check for italic: *...* (not **)
     if (text[pos] === '*' && (!text.startsWith('**', pos))) {
       const endIdx = text.indexOf('*', pos + 1);
       if (endIdx !== -1 && !text.startsWith('**', endIdx)) {
@@ -419,7 +390,6 @@ function parseInlineTokens(text: string): InlineToken[] {
       }
     }
 
-    // Accumulate plain text up to next special character
     let nextSpecial = pos + 1;
     while (
       nextSpecial < text.length &&
