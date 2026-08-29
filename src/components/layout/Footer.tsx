@@ -10,7 +10,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenGuide }) => {
   return (
     <footer className="border-t border-[#E2E8F0] dark:border-[#30363D] bg-white dark:bg-[#090D13] text-[#64748B] dark:text-[#8B949E] text-sm py-8 transition-colors">
       <div className="max-w-7xl mx-auto px-6 sm:px-10">
-        {/* Brand & Quote Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6">
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2.5">
@@ -42,7 +41,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenGuide }) => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="pt-6 border-t border-[#E2E8F0] dark:border-[#30363D]/60 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#64748B] dark:text-[#8B949E] uppercase tracking-widest gap-3 font-medium">
           <div className="flex items-center gap-4 sm:gap-6">
             <span>© 2026 Socratic Mentor</span>

@@ -5,13 +5,13 @@ import { generateId } from '../lib/utils';
 import { generateLocalSocraticResponse, generateMeaningfulTitle } from '../lib/ai/socraticPrompt';
 import { playEurekaTone } from '../lib/audio';
 
-const SESSIONS_STORAGE_KEY = 'my-mentor-chat-history';
-const ACTIVE_SESSION_ID_KEY = 'my-mentor-active-session-id';
+const SESSIONS_STORAGE_KEY = 'socratic-mentor-chat-history';
+const ACTIVE_SESSION_ID_KEY = 'socratic-mentor-active-session-id';
 
 const INITIAL_WELCOME_MESSAGE: ChatMessage = {
   id: 'welcome-msg',
   role: 'assistant',
-  content: `Hello! I'm **my-mentor**, your Socratic learning partner. 🤖
+  content: `Hello! I'm **Socratic Mentor**, your Socratic learning partner. 🤖
 
 Instead of just handing you solutions, I'll ask guided questions to help you understand the core concepts and arrive at the answers yourself.
 
@@ -487,7 +487,7 @@ export function useChat(
     const welcomeMessage: ChatMessage = {
       id: `welcome-${Date.now()}`,
       role: 'assistant',
-      content: `Hello! I'm **my-mentor**, your Socratic learning partner. 🤖
+      content: `Hello! I'm **Socratic Mentor**, your Socratic learning partner. 🤖
 
 Instead of just handing you solutions, I'll ask guided questions to help you understand the core concepts and arrive at the answers yourself.
 

@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from "express";
 import { GoogleGenAI, Type } from "@google/genai";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 export const app = express();
 
@@ -26,13 +27,19 @@ const SOCRATIC_SYSTEM_PROMPT = `You are "Socratic Mentor", a brilliant, modern, 
    - Guide the user with insightful questions, thought experiments, clear analogies, and step-by-step milestones.
    - If they are stuck, give a targeted hint or ask what their intuition suggests for the immediate next step.
 
-3. ELEGANT MATHEMATICAL & TEXT FORMATTING:
+3. FILE ANALYSIS:
+   - If the user attaches a PDF or text file, read and analyze its contents.
+   - For resumes, provide feedback on structure, impact, and clarity.
+   - For code files, review the code and suggest improvements.
+   - For documents, summarize key points and offer insights.
+
+4. ELEGANT MATHEMATICAL & TEXT FORMATTING:
    - Format math using standard clean LaTeX delimiters so it renders as beautiful typography.
    - Use simple dollar delimiters ($...$ and $$...$$) rather than raw escaped parentheses or brackets.
    - Code: Use clean fenced code blocks.
    - Text layout: Use clean paragraphs with natural line breaks.
 
-4. CELEBRATE LEARNING:
+5. CELEBRATE LEARNING:
    - Celebrate eureka moments when the user discovers the insight.
 
 ## JSON RESPONSE SCHEMA:
@@ -53,7 +60,7 @@ const GROQ_MODELS = [
   "groq/compound-mini"
 ];
 
-app.use(express.json({ limit: "15mb" }));
+app.use(express.json({ limit: "25mb" }));
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -75,10 +82,22 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+async function extractPdfText(buffer: Buffer): Promise<string> {
+  const doc = await getDocument({ data: new Uint8Array(buffer) }).promise;
+  let text = "";
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map((item: any) => item.str).join(" ") + "\n";
+  }
+  return text;
+}
+
 async function callGroqChat(
   systemPrompt: string,
   history: Array<{ role: string; content: string }>,
-  message: string
+  message: string,
+  images: Array<{ url: string }>
 ) {
   if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY not configured");
 
@@ -88,9 +107,26 @@ async function callGroqChat(
     try {
       const messages: any[] = [
         { role: "system", content: systemPrompt },
-        ...history.slice(-8).map((h) => ({ role: h.role, content: h.content })),
-        { role: "user", content: message }
+        ...history.slice(-8).map((h) => ({ role: h.role, content: h.content }))
       ];
+
+      if (images.length > 0) {
+        messages.push({
+          role: "user",
+          content: [
+            { type: "text", text: message },
+            ...images.map((img) => ({
+              type: "image_url",
+              image_url: { url: img.url }
+            }))
+          ]
+        });
+      } else {
+        messages.push({
+          role: "user",
+          content: message
+        });
+      }
 
       const response = await fetch(GROQ_API_URL, {
         method: "POST",
@@ -152,19 +188,39 @@ async function callGroqChat(
 async function callGeminiChat(
   systemPrompt: string,
   history: Array<{ role: string; content: string }>,
-  message: string
+  message: string,
+  images: Array<{ url: string }>
 ) {
   if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not configured");
 
   const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-  const contents = [
+  const contents: any[] = [
     ...history.slice(-10).map((h) => ({
       role: h.role === "user" ? "user" : "model",
       parts: [{ text: h.content }]
-    })),
-    { role: "user", parts: [{ text: message }] }
+    }))
   ];
+
+  const userParts: any[] = [];
+
+  for (const img of images) {
+    if (img.url.startsWith("data:image/")) {
+      const parts = img.url.split(";base64,");
+      if (parts.length === 2) {
+        const mimeType = parts[0].replace("data:", "") || "image/png";
+        userParts.push({
+          inlineData: {
+            mimeType,
+            data: parts[1]
+          }
+        });
+      }
+    }
+  }
+
+  userParts.push({ text: message });
+  contents.push({ role: "user", parts: userParts });
 
   const CANDIDATE_GEMINI_MODELS = [
     "gemini-3.6-flash",
@@ -217,17 +273,61 @@ async function callGeminiChat(
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message, history = [], topic = "" } = req.body;
+    const { message, history = [], topic = "", attachments = [] } = req.body;
 
-    if (!message || typeof message !== "string") {
-      return res.status(400).json({ error: "A message string is required." });
+    if (!message && (!attachments || attachments.length === 0)) {
+      return res.status(400).json({ error: "A message or attachment is required." });
     }
+
+    const images: Array<{ url: string }> = [];
+    const textFiles: any[] = [];
+
+    if (Array.isArray(attachments)) {
+      for (const att of attachments) {
+        if (!att) continue;
+        const isImg = (att.type && att.type.startsWith("image/")) || (att.url && att.url.startsWith("data:image/"));
+        const isPdf = att.type === "application/pdf" || (att.name && att.name.endsWith(".pdf"));
+
+        if (isImg && att.url) {
+          images.push({ url: att.url });
+        } else if (isPdf && att.url) {
+          try {
+            const response = await fetch(att.url);
+            const buffer = await response.arrayBuffer();
+            const parsed = await extractPdfText(Buffer.from(buffer));
+            textFiles.push({ name: att.name, textContent: parsed });
+          } catch (e) {
+            console.warn("Failed to parse PDF:", e);
+            textFiles.push({ name: att.name, textContent: "" });
+          }
+        } else {
+          textFiles.push(att);
+        }
+      }
+    }
+
+    const attachmentSummary = textFiles.length > 0
+      ? textFiles.map((att: any) => {
+          if (att.textContent) {
+            return `[Attached File: "${att.name}" (${att.type || "file"})]:\n\`\`\`\n${att.textContent}\n\`\`\``;
+          }
+          return `[Attached File: "${att.name}" (${att.type || "file"})]`;
+        }).join("\n\n")
+      : "";
+
+    const effectiveMessage = message?.trim() || (images.length > 0 
+      ? "Please analyze the attached image and guide me through solving it."
+      : (attachmentSummary
+          ? "Please analyze the attached file and provide feedback."
+          : "Can you help guide me on this?"));
+
+    const fullMessage = attachmentSummary ? `${attachmentSummary}\n\n${effectiveMessage}` : effectiveMessage;
 
     let result: { parsed: any; model: string } | null = null;
 
     if (GEMINI_API_KEY) {
       try {
-        result = await callGeminiChat(SOCRATIC_SYSTEM_PROMPT, history, message);
+        result = await callGeminiChat(SOCRATIC_SYSTEM_PROMPT, history, fullMessage, images);
       } catch (e) {
         console.warn("Gemini failed:", e.message || e);
       }
@@ -235,7 +335,7 @@ app.post("/api/chat", async (req, res) => {
 
     if (!result && GROQ_API_KEY) {
       try {
-        result = await callGroqChat(SOCRATIC_SYSTEM_PROMPT, history, message);
+        result = await callGroqChat(SOCRATIC_SYSTEM_PROMPT, history, fullMessage, images);
       } catch (e) {
         console.warn("Groq failed:", e.message || e);
       }
@@ -244,12 +344,12 @@ app.post("/api/chat", async (req, res) => {
     if (!result) {
       console.warn("Using local fallback");
       return res.json({
-        response: "I hear you! Let's explore this together. What's on your mind?",
+        response: "I've received your file! Let's analyze it together. What specific aspect would you like me to focus on?",
         guidanceType: "question",
-        suggestedReplies: ["Let's dive deeper", "Can you give me a hint?", "I'm stuck"],
+        suggestedReplies: ["Review the overall structure", "Improve the impact of my experience", "Check for any errors"],
         eurekaMoment: false,
         conceptLearned: "",
-        sessionTitle: topic || "Socratic Dialogue",
+        sessionTitle: topic || "File Analysis",
         source: "fallback"
       });
     }
