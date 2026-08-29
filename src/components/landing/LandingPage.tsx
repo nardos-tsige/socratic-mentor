@@ -55,13 +55,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
   return (
     <div className="w-full flex flex-col bg-[#F8FAFC] dark:bg-[#0D1117] text-[#0F172A] dark:text-[#F0F6FC] transition-colors">
-      {/* 1. HERO SECTION (Above the Fold) */}
       <section className="relative flex flex-col items-center justify-center px-4 sm:px-10 pt-8 pb-16 sm:py-14 overflow-hidden">
-        {/* Background Ambient Glow */}
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[550px] h-[550px] bg-[#059669]/10 dark:bg-[#34D399]/10 rounded-full blur-[120px] pointer-events-none -z-10" />
 
         <div className="text-center max-w-3xl z-10 w-full space-y-6">
-          {/* Robot Mascot with Speech Bubble */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -79,7 +76,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             />
           </motion.div>
 
-          {/* Title & Subtitle */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -98,7 +94,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </p>
           </motion.div>
 
-          {/* Glowing Input Box */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -132,7 +127,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </form>
           </motion.div>
 
-          {/* Starter Questions Suggestions */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -153,7 +147,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 2. THE DIFFERENCE SECTION (Why my-mentor is different) */}
       <section className="py-16 px-4 sm:px-10 border-t border-[#E2E8F0] dark:border-[#30363D] bg-[#F1F5F9]/50 dark:bg-[#161B22]/30">
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center space-y-1.5">
@@ -166,7 +159,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Generic AI Bot */}
             <div className="p-6 rounded-2xl bg-white dark:bg-[#161B22]/60 border border-red-500/20 space-y-4 shadow-sm flex flex-col justify-between card-3d">
               <div className="space-y-3.5">
                 <div className="flex items-center justify-between text-xs pb-2 border-b border-red-500/10">
@@ -196,12 +188,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
             </div>
 
-            {/* my-mentor Socratic Bot */}
             <div className="p-6 rounded-2xl bg-white dark:bg-[#161B22] border-2 border-[#059669]/50 dark:border-[#34D399]/50 space-y-4 shadow-lg flex flex-col justify-between card-3d">
               <div className="space-y-3.5">
                 <div className="flex items-center justify-between text-xs pb-2 border-b border-[#059669]/10 dark:border-[#34D399]/10">
                   <span className="font-bold text-[#059669] dark:text-[#34D399] flex items-center gap-1.5 text-3d-emerald">
-                    <Bot className="w-4 h-4" /> my-mentor
+                    <Bot className="w-4 h-4" /> Socratic Mentor
                   </span>
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">
                     100% deep comprehension
@@ -214,7 +205,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#ECFDF5] dark:bg-[#34D399]/10 border border-[#A7F3D0] dark:border-[#34D399]/30 text-[#0F172A] dark:text-[#F0F6FC] space-y-1.5">
                     <div className="font-bold text-[#059669] dark:text-[#34D399] flex items-center gap-1">
-                      <Bot className="w-3.5 h-3.5" /> my-mentor:
+                      <Bot className="w-3.5 h-3.5" /> Socratic Mentor:
                     </div>
                     <p className="leading-relaxed font-medium">
                       "Great problem! Our goal is to isolate <code className="px-1 py-0.5 rounded bg-[#059669]/10 dark:bg-[#34D399]/20 text-[#059669] dark:text-[#34D399] font-bold">x</code>. What operation would undo the <strong>+5</strong> first?"
@@ -239,7 +230,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 3. THREE PILLARS (How It Works) */}
       <section className="py-16 px-4 sm:px-10 bg-white dark:bg-[#0D1117]">
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center space-y-1.5">
@@ -247,12 +237,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               Core Pedagogy
             </h2>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-[#F0F6FC] text-3d-bold">
-              How my-mentor Works
+              How Socratic Mentor Works
             </h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Pillar 1 */}
             <div className="p-6 rounded-2xl bg-[#F8FAFC] dark:bg-[#161B22] border border-[#E2E8F0] dark:border-[#30363D] hover:border-[#059669]/50 dark:hover:border-[#34D399]/50 transition-all space-y-3 card-3d">
               <div className="w-12 h-12 rounded-xl bg-[#059669]/10 dark:bg-[#34D399]/10 flex items-center justify-center text-2xl mb-3 shadow-xs">
                 🧠
@@ -263,7 +252,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </p>
             </div>
 
-            {/* Pillar 2 */}
             <div className="p-6 rounded-2xl bg-[#F8FAFC] dark:bg-[#161B22] border border-[#E2E8F0] dark:border-[#30363D] hover:border-[#7C3AED]/50 dark:hover:border-[#BC8CFF]/50 transition-all space-y-3 card-3d">
               <div className="w-12 h-12 rounded-xl bg-[#7C3AED]/10 dark:bg-[#BC8CFF]/10 flex items-center justify-center text-2xl mb-3 shadow-xs">
                 💡
@@ -274,7 +262,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </p>
             </div>
 
-            {/* Pillar 3 */}
             <div className="p-6 rounded-2xl bg-[#F8FAFC] dark:bg-[#161B22] border border-[#E2E8F0] dark:border-[#30363D] hover:border-[#EA580C]/50 dark:hover:border-[#F0883E]/50 transition-all space-y-3 card-3d">
               <div className="w-12 h-12 rounded-xl bg-[#EA580C]/10 dark:bg-[#F0883E]/10 flex items-center justify-center text-2xl mb-3 shadow-xs">
                 📈
@@ -288,7 +275,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 4. FEATURES SECTION (What Makes It Special) */}
       <section className="py-16 px-4 sm:px-10 border-t border-[#E2E8F0] dark:border-[#30363D] bg-[#F1F5F9]/40 dark:bg-[#161B22]/20">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="text-center space-y-1.5">
@@ -296,12 +282,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               Specialized Features
             </h2>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-[#F0F6FC] text-3d-bold">
-              What Makes my-mentor Different
+              What Makes Socratic Mentor Different
             </h3>
           </div>
 
           <div className="space-y-4">
-            {/* Feature 1 */}
             <div className="p-6 rounded-2xl bg-white dark:bg-[#161B22] border border-[#E2E8F0] dark:border-[#30363D] card-3d space-y-3 hover:border-[#059669]/40 dark:hover:border-[#34D399]/40 transition-colors">
               <h4 className="font-bold text-base sm:text-lg text-[#0F172A] dark:text-[#F0F6FC] flex items-center gap-2.5">
                 <div className="w-6 h-6 rounded-lg bg-[#059669]/15 dark:bg-[#34D399]/20 text-[#059669] dark:text-[#34D399] flex items-center justify-center">
@@ -322,7 +307,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </ul>
             </div>
 
-            {/* Feature 2 */}
             <div className="p-6 rounded-2xl bg-white dark:bg-[#161B22] border border-[#E2E8F0] dark:border-[#30363D] card-3d space-y-3 hover:border-[#7C3AED]/40 dark:hover:border-[#BC8CFF]/40 transition-colors">
               <h4 className="font-bold text-base sm:text-lg text-[#0F172A] dark:text-[#F0F6FC] flex items-center gap-2.5">
                 <div className="w-6 h-6 rounded-lg bg-[#7C3AED]/15 dark:bg-[#BC8CFF]/20 text-[#7C3AED] dark:text-[#BC8CFF] flex items-center justify-center">
@@ -343,7 +327,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </ul>
             </div>
 
-            {/* Feature 3 */}
             <div className="p-6 rounded-2xl bg-white dark:bg-[#161B22] border border-[#E2E8F0] dark:border-[#30363D] card-3d space-y-3 hover:border-[#EA580C]/40 dark:hover:border-[#F0883E]/40 transition-colors">
               <h4 className="font-bold text-base sm:text-lg text-[#0F172A] dark:text-[#F0F6FC] flex items-center gap-2.5">
                 <div className="w-6 h-6 rounded-lg bg-[#EA580C]/15 dark:bg-[#F0883E]/20 text-[#EA580C] dark:text-[#F0883E] flex items-center justify-center">
@@ -367,7 +350,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 5. LEARN ANYTHING SECTION (Subject-Agnostic) */}
       <section className="py-16 px-4 sm:px-10 border-t border-[#E2E8F0] dark:border-[#30363D] bg-white dark:bg-[#0D1117]">
         <div className="max-w-4xl mx-auto space-y-8 text-center">
           <div className="space-y-3">
@@ -378,11 +360,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               Learn Anything, Anywhere
             </h3>
             <p className="text-sm sm:text-base text-[#64748B] dark:text-[#8B949E] max-w-2xl mx-auto leading-relaxed font-medium">
-              my-mentor works across every subject because it teaches you HOW to think, not WHAT to think.
+              Socratic Mentor works across every subject because it teaches you HOW to think, not WHAT to think.
             </p>
           </div>
 
-          {/* Versatility Chips Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 max-w-3xl mx-auto pt-2">
             {versatilitySubjects.map((subject, idx) => (
               <button
@@ -402,7 +383,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 6. GETTING STARTED (Call to Action) */}
       <section className="py-16 px-4 sm:px-10 border-t border-[#E2E8F0] dark:border-[#30363D] bg-[#F1F5F9]/60 dark:bg-[#161B22]/40">
         <div className="max-w-3xl mx-auto space-y-6 text-center">
           <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-[#F0F6FC] text-3d-bold">
