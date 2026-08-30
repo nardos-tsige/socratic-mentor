@@ -3,7 +3,6 @@ dotenv.config();
 
 import express from "express";
 import { GoogleGenAI, Type } from "@google/genai";
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 export const app = express();
 
@@ -27,7 +26,8 @@ const SOCRATIC_SYSTEM_PROMPT = `You are "Socratic Mentor", a brilliant, modern, 
    - Guide the user with insightful questions, thought experiments, clear analogies, and step-by-step milestones.
    - If they are stuck, give a targeted hint or ask what their intuition suggests for the immediate next step.
 
-3. FILE ANALYSIS:
+3. FILE & IMAGE ANALYSIS:
+   - If the user attaches an image, analyze it carefully (math problems, diagrams, code screenshots, etc.)
    - If the user attaches a PDF or text file, read and analyze its contents.
    - For resumes, provide feedback on structure, impact, and clarity.
    - For code files, review the code and suggest improvements.
@@ -81,17 +81,6 @@ app.get("/api/health", (req, res) => {
     timestamp: Date.now()
   });
 });
-
-async function extractPdfText(buffer: Buffer): Promise<string> {
-  const doc = await getDocument({ data: new Uint8Array(buffer) }).promise;
-  let text = "";
-  for (let i = 1; i <= doc.numPages; i++) {
-    const page = await doc.getPage(i);
-    const content = await page.getTextContent();
-    text += content.items.map((item: any) => item.str).join(" ") + "\n";
-  }
-  return text;
-}
 
 async function callGroqChat(
   systemPrompt: string,
@@ -189,7 +178,8 @@ async function callGeminiChat(
   systemPrompt: string,
   history: Array<{ role: string; content: string }>,
   message: string,
-  images: Array<{ url: string }>
+  images: Array<{ url: string }>,
+  pdfs: Array<{ url: string; name: string }>
 ) {
   if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not configured");
 
@@ -212,6 +202,20 @@ async function callGeminiChat(
         userParts.push({
           inlineData: {
             mimeType,
+            data: parts[1]
+          }
+        });
+      }
+    }
+  }
+
+  for (const pdf of pdfs) {
+    if (pdf.url.startsWith("data:application/pdf;base64,")) {
+      const parts = pdf.url.split(";base64,");
+      if (parts.length === 2) {
+        userParts.push({
+          inlineData: {
+            mimeType: "application/pdf",
             data: parts[1]
           }
         });
@@ -280,6 +284,7 @@ app.post("/api/chat", async (req, res) => {
     }
 
     const images: Array<{ url: string }> = [];
+    const pdfs: Array<{ url: string; name: string }> = [];
     const textFiles: any[] = [];
 
     if (Array.isArray(attachments)) {
@@ -291,15 +296,7 @@ app.post("/api/chat", async (req, res) => {
         if (isImg && att.url) {
           images.push({ url: att.url });
         } else if (isPdf && att.url) {
-          try {
-            const response = await fetch(att.url);
-            const buffer = await response.arrayBuffer();
-            const parsed = await extractPdfText(Buffer.from(buffer));
-            textFiles.push({ name: att.name, textContent: parsed });
-          } catch (e) {
-            console.warn("Failed to parse PDF:", e);
-            textFiles.push({ name: att.name, textContent: "" });
-          }
+          pdfs.push({ url: att.url, name: att.name });
         } else {
           textFiles.push(att);
         }
@@ -309,25 +306,29 @@ app.post("/api/chat", async (req, res) => {
     const attachmentSummary = textFiles.length > 0
       ? textFiles.map((att: any) => {
           if (att.textContent) {
-            return `[Attached File: "${att.name}" (${att.type || "file"})]:\n\`\`\`\n${att.textContent}\n\`\`\``;
+            return `[File: "${att.name}" - Content]:\n${att.textContent}`;
           }
-          return `[Attached File: "${att.name}" (${att.type || "file"})]`;
+          return `[File: "${att.name}" (${att.type || "file"}, ${att.size || "unknown"} bytes)]`;
         }).join("\n\n")
       : "";
 
     const effectiveMessage = message?.trim() || (images.length > 0 
-      ? "Please analyze the attached image and guide me through solving it."
-      : (attachmentSummary
-          ? "Please analyze the attached file and provide feedback."
-          : "Can you help guide me on this?"));
+      ? "Please analyze the attached image."
+      : (pdfs.length > 0
+          ? "Please read and analyze the attached PDF."
+          : (attachmentSummary
+              ? "Please analyze the attached file."
+              : "Can you help guide me on this?")));
 
-    const fullMessage = attachmentSummary ? `${attachmentSummary}\n\n${effectiveMessage}` : effectiveMessage;
+    const fullMessage = attachmentSummary 
+      ? `${attachmentSummary}\n\nUser request: ${effectiveMessage}`
+      : effectiveMessage;
 
     let result: { parsed: any; model: string } | null = null;
 
     if (GEMINI_API_KEY) {
       try {
-        result = await callGeminiChat(SOCRATIC_SYSTEM_PROMPT, history, fullMessage, images);
+        result = await callGeminiChat(SOCRATIC_SYSTEM_PROMPT, history, fullMessage, images, pdfs);
       } catch (e) {
         console.warn("Gemini failed:", e.message || e);
       }
@@ -344,9 +345,9 @@ app.post("/api/chat", async (req, res) => {
     if (!result) {
       console.warn("Using local fallback");
       return res.json({
-        response: "I've received your file! Let's analyze it together. What specific aspect would you like me to focus on?",
+        response: "I see you've attached a file. Let's analyze it together. What would you like me to focus on?",
         guidanceType: "question",
-        suggestedReplies: ["Review the overall structure", "Improve the impact of my experience", "Check for any errors"],
+        suggestedReplies: ["Review the content", "Summarize key points", "Provide feedback"],
         eurekaMoment: false,
         conceptLearned: "",
         sessionTitle: topic || "File Analysis",

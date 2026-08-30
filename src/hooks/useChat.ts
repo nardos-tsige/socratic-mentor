@@ -158,7 +158,7 @@ export function useChat(
                   name: a.name,
                   type: a.type,
                   size: a.size,
-                  url: a.url && (a.url.startsWith('data:image/') || a.url.startsWith('http')) ? a.url : undefined,
+                  url: a.url || undefined,
                   textContent: a.textContent ? a.textContent.slice(0, 25000) : undefined,
                 }))
               : undefined,

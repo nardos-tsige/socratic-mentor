@@ -153,18 +153,12 @@ export const SUBJECT_AREAS: SubjectArea[] = [
   }
 ];
 
-<<<<<<< HEAD
-=======
 // client-side socratic fallback engine for offline/network failures
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
 export function generateMeaningfulTitle(prompt: string, subject?: string): string {
   const trimmed = prompt.trim();
   if (!trimmed) return 'New Exploration';
 
-<<<<<<< HEAD
-=======
   // check curated suggestions first
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   const matchSug = CURATED_SUGGESTIONS.find(
     (s) => s.prompt.toLowerCase() === trimmed.toLowerCase() || trimmed.toLowerCase().includes(s.title.toLowerCase())
   );
@@ -172,10 +166,7 @@ export function generateMeaningfulTitle(prompt: string, subject?: string): strin
 
   const lower = trimmed.toLowerCase();
 
-<<<<<<< HEAD
-=======
   // pattern-based title synthesis
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (lower.includes('absolute value') || lower.includes('|') || lower.includes('abs(')) {
     return 'Absolute Value Equations';
   }
@@ -210,10 +201,7 @@ export function generateMeaningfulTitle(prompt: string, subject?: string): strin
     return 'Quantum Mechanics Inquiry';
   }
 
-<<<<<<< HEAD
-=======
   // strip conversational filler prefixes
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   let cleaned = trimmed
     .replace(/^(can you |could you |please |help me |i want to |i'd like to |teach me |explain to me |explain |how do i |how to |why is |why does |what is |what are |tell me about )\s*/i, '')
     .replace(/[?.!]+$/g, '')
@@ -223,10 +211,7 @@ export function generateMeaningfulTitle(prompt: string, subject?: string): strin
     cleaned = trimmed.replace(/[?.!]+$/g, '').trim();
   }
 
-<<<<<<< HEAD
-=======
   // capitalize words nicely
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   const titleCased = cleaned
     .split(' ')
     .slice(0, 5)
@@ -254,10 +239,7 @@ export function generateLocalSocraticResponse(
   const lower = userMessage.toLowerCase().trim();
   const meaningfulTitle = generateMeaningfulTitle(userMessage);
 
-<<<<<<< HEAD
-=======
   // greetings
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   const isGreeting = /^(hey|hello|hi|hiya|yo|sup|greetings|good (morning|afternoon|evening)|howdy)\b/i.test(lower);
   if (isGreeting && lower.split(/\s+/).length <= 4) {
     return {
@@ -276,10 +258,7 @@ What subject, math problem, code snippet, or curious concept would you like to e
     };
   }
 
-<<<<<<< HEAD
-=======
   // frustration or feedback
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (
     lower.includes('not interacting well') ||
     lower.includes('uff') ||
@@ -288,10 +267,7 @@ What subject, math problem, code snippet, or curious concept would you like to e
     lower.includes('why are you asking') ||
     lower.includes('i already')
   ) {
-<<<<<<< HEAD
-=======
     // check if there was python code in history
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
     const hadPythonInHistory = history.some(h => h.content.includes('print(') || h.content.includes('(c - b) / a') || h.content.includes('python'));
     if (hadPythonInHistory) {
       return {
@@ -339,10 +315,7 @@ Tell me what specific aspect or challenge you'd like to tackle right now, and I'
     };
   }
 
-<<<<<<< HEAD
-=======
   // python code or programming problem
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (
     userMessage.includes('a, b, c') ||
     userMessage.includes('print(') ||
@@ -377,10 +350,7 @@ From a software engineering perspective: what happens if a user passes $a = 0$ i
     };
   }
 
-<<<<<<< HEAD
-=======
   // student meta-prompting
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (lower.includes('ask me if') || lower.includes('subtract or')) {
     return {
       response: `You got it! Let's do exactly that:
@@ -400,10 +370,7 @@ To isolate the term with $x$, should we **add** or **subtract** $b$ from both si
     };
   }
 
-<<<<<<< HEAD
-=======
   // 3y - 4 = 11
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (lower.includes('3y - 4') || lower.includes('3y-4') || lower.includes('3y - 4 = 11') || (lower.includes('linear equation') && !lower.includes('|') && !lower.includes('python'))) {
     return {
       response: `Sure! Let's work on another linear equation. How about:
@@ -467,10 +434,7 @@ Would you like to try solving an equation with absolute values like $$|3y - 4| =
     };
   }
 
-<<<<<<< HEAD
-=======
   // absolute value equations
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (lower.includes('absolute value') || lower.includes('|') || lower.includes('abs(')) {
     if (lower.includes('case') || lower.includes('split') || lower.includes('positive and negative') || lower.includes('two equation') || lower.includes('both')) {
       return {
@@ -513,10 +477,7 @@ If the distance is $11$, what two possible values could the inside expression \\
     };
   }
 
-<<<<<<< HEAD
-=======
   // classic 2x + 5 = 15
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (lower.includes('2x + 5') || lower.includes('2x+5')) {
     return {
       response: `That's a classic algebraic equation:
@@ -536,10 +497,7 @@ To solve for $x$, our goal is to isolate $x$ all by itself. Looking at \\(2x + 5
     };
   }
 
-<<<<<<< HEAD
-=======
   // photosynthesis
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   if (lower.includes('photosynthesis') || lower.includes('sunlight into energy') || lower.includes('plants')) {
     return {
       response: `Photosynthesis is one of nature's most brilliant processes! 🌿
@@ -559,10 +517,7 @@ Besides sunlight, what two other essential ingredients do plants absorb from the
     };
   }
 
-<<<<<<< HEAD
-=======
   // general socratic fallback
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
   const isQuestion = lower.endsWith('?') || lower.startsWith('how') || lower.startsWith('why') || lower.startsWith('what');
   
   if (isQuestion) {
@@ -596,8 +551,6 @@ If we apply that logic here, what do you think would happen next?`,
     conceptLearned: '',
     sessionTitle: meaningfulTitle
   };
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2cc59b1e17836d1fc90c83c63d1958d9cde938b0
+
+

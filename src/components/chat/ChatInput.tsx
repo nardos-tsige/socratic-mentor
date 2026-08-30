@@ -90,20 +90,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           reader.readAsText(file);
         });
       }
-
-      if (file.type.startsWith('image/') && file.size < 1024 * 1024 * 12) {
+      if (file.size < 1024 * 1024 * 15) {
         url = await new Promise<string>((resolve) => {
           const reader = new FileReader();
           reader.onload = () => resolve((reader.result as string) || '');
           reader.onerror = () => resolve('');
           reader.readAsDataURL(file);
         });
-      } else {
-        try {
-          url = URL.createObjectURL(file);
-        } catch {
-          url = '';
-        }
       }
 
       newAttachments.push({
@@ -350,5 +343,3 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     </div>
   );
 };
-
-
